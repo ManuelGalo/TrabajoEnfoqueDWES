@@ -1,0 +1,68 @@
+FROM php:8.4-fpm-alpine
+
+# Install system dependencies
+RUN apk add --no-cache \
+    git \
+    build-base \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    freetype-dev \
+    libzip-dev \
+    zip \
+    jpegoptim optipng pngquant gifsicle \
+    unzip \
+    curl \
+    supervisor \
+    icu-dev
+
+# Install PHP extensions
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg
+RUN docker-php-ext-install \
+    pdo_mysql \
+    gd \
+    zip \
+    exif \
+    pcntl \
+    bcmath \
+    intl
+
+# Install Redis extension
+RUN apk add --no-cache pcre-dev $PHPIZE_DEPS && \
+    pecl install redis && \
+    docker-php-ext-enable redis && \
+    apk del $PHPIZE_DEPS
+
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Set working directory
+WORKDIR /var/www/html
+
+# Copy application code FIRST
+COPY . .
+
+# Install PHP dependencies
+RUN composer install --no-dev --optimize-autoloader --no-interaction
+
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html/storage \
+    && chmod -R 755 /var/www/html/bootstrap/cache
+
+# Create log directory for supervisor
+RUN mkdir -p /var/log/supervisor
+
+# Copy supervisor configuration
+COPY supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Expose PHP-FPM port
+EXPOSE 9000
+
+ARG WWWGROUP=1000
+
+# Crear grupo/usuario de forma compatible con Alpine (y fallback a Debian)
+RUN if command -v addgroup >/dev/null 2>&1; then \
+      addgroup -g "${WWWGROUP}" sail && adduser -D -u 1337 -G sail sail; \
+    else \
+      groupadd --force -g "${WWWGROUP}" sail && useradd -ms /bin/bash --no-user-group -g "${WWWGROUP}" -u 1337 sail; \
+    fi
