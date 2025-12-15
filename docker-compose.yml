@@ -10,7 +10,7 @@ services:
             - 'host.docker.internal:host-gateway'
         ports:
             - '${APP_PORT:-80}:80'
-            - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
+            #- '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
         environment:
             WWWUSER: '${WWWUSER}'
             LARAVEL_SAIL: 1
@@ -27,6 +27,20 @@ services:
             - meilisearch
             - mailpit
             - selenium
+    frontend:
+        build:
+            context: .
+            dockerfile: Dockerfile.node # Usará el nuevo Dockerfile.node
+        volumes:
+            # Monta tu código local dentro del contenedor
+            - .:/var/www/html
+            # Esto permite que Vite use el puerto 5173 (u otro) para Hot Reloading
+            - /var/www/html/node_modules
+        ports:
+            # Mapea el puerto de Vite del contenedor al puerto local
+            - "5173:5173"
+        command: npm run dev
+
     mysql:
         image: 'mysql/mysql-server:8.0'
         ports:
