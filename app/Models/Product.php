@@ -18,8 +18,12 @@ class Product extends Model
         'description',
         'price',
         'stock',
-        'image_path',
+        'images',
         'is_active',
+    ];
+
+    protected $casts = [
+        'images' => 'array',
     ];
     public function getSlugOptions() : SlugOptions
      {
@@ -29,4 +33,5 @@ class Product extends Model
             ->startSlugSuffixFrom(2)
             ->doNotGenerateSlugsOnUpdate();
     }
+
 }
