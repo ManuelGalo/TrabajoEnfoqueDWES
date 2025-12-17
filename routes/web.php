@@ -5,13 +5,11 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Models\Product;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\HomeController;
 
 // Rutas publicas
 
-Route::get('/', function () {
-    $products = Product::where('is_active', true)->get();
-    return view('welcome', compact('products'));
-});
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
     //rutas del carrito
 Route::get('/carrito', [CartController::class,'index'])->name('cart.index');   

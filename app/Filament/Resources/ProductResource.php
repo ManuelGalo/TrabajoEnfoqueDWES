@@ -11,6 +11,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
@@ -56,6 +57,14 @@ class ProductResource extends Resource
                             ->readOnly(),
                         TextArea::make('description')
                             ->label('Descripción')
+                            ->required(),
+                        Select::make('category')
+                            ->label('Categoria')
+                            ->options([
+                                'deporte' => 'Deporte',
+                                'casual' => 'Casual',
+                                'botas' => 'Botas',
+                            ])
                             ->required(),
                         TextInput::make('price')
                             ->label('Precio (EUR)')
