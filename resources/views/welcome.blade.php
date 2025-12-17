@@ -273,5 +273,20 @@
         @if (Route::has('login'))
             <div class="h-14.5 hidden lg:block"></div>
         @endif
+        @foreach($products as $product)
+            <div class="border p-4 rounded-lg">
+                <img src="{{ asset('storage/' . ($product->images[0] ?? 'default.jpg')) }}" class="w-full h-48 object-cover">
+                <h2 class="text-xl font-bold">{{ $product->name }}</h2>
+                <p class="text-gray-600">{{ $product->price }} €</p>
+                
+                <form action="{{ route('cart.add', $product) }}" method="POST">
+                    @csrf
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 mt-2 rounded">
+                        Añadir al carrito
+                    </button>
+                </form>
+            </div>
+        @endforeach
+
     </body>
 </html>

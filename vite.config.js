@@ -16,4 +16,15 @@ export default defineConfig({
             ],
         }),
     ],
+    server: {
+        host: '0.0.0.0', 
+        hmr: {
+            host: 'localhost',
+            port: 5173,      // Puerto explícito para evitar confusiones
+            protocol: 'ws',  // Protocolo WebSocket
+        },
+        watch: {
+            usePolling: true, // Crucial para que WSL detecte cambios en los archivos de Filament
+        },
+    }
 })
