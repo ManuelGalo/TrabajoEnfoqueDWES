@@ -18,7 +18,6 @@ class Product extends Model
         'description',
         'category',
         'price',
-        'stock',
         'images',
         'is_active',
     ];
@@ -33,6 +32,10 @@ class Product extends Model
             ->saveSlugsTo('slug')
             ->startSlugSuffixFrom(2)
             ->doNotGenerateSlugsOnUpdate();
+    }
+
+    public function sizes() {
+        return $this->hasMany(ProductSize::class);
     }
 
 }

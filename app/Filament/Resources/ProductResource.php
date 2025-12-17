@@ -12,6 +12,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
@@ -74,11 +75,20 @@ class ProductResource extends Resource
                             ->inputMode('decimal')
                             ->step(0.01)
                             ->placeholder('10.00'),
-                        TextInput::make('stock')
-                            ->label('Stock')
-                            ->required()
-                            ->numeric()
-                            ->maxLength(20),
+                        Repeater::make('sizes')
+                            ->relationship() // Busca la función sizes() en el modelo Product
+                            ->schema([
+                                TextInput::make('size')
+                                    ->label('Talla')
+                                    ->required()
+                                    ->maxLength(10),
+                                TextInput::make('stock')
+                                    ->numeric()
+                                    ->required()
+                                    ->default(0),
+                            ])
+                            ->columns(2)
+                            ->label('Gestión de Tallas y Stock'),
                         Toggle::make('is_active')
                             ->label('Producto activo')
                             ->default(true)
