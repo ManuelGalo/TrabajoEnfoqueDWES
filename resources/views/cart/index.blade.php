@@ -41,13 +41,18 @@
             </div>
             <div>
                 <a href="/" class="bg-gray-500 text-white px-6 py-2 rounded-lg mr-2">Seguir Comprando</a>
-                @if(Auth::check())
-                 {{-- Si está logueado, va directo al proceso de pedido --}}
-                <a href="{{ route('checkout') }}" class="bg-green-600 text-white px-6 py-2 rounded-lg font-bold">Finalizar Pedido</a>
+                @auth
+                    <form action="{{ route('order.store') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg font-bold">
+                            Confirmar y Pagar
+                        </button>
+                    </form>
                 @else
-                {{-- Si no está logueado, lo mandamos al login, y Laravel lo devolverá aquí después --}}
-                <a href="{{ route('login') }}" class="btn-blue">Inicia sesión para finalizar</a>
-                @endif
+                    <a href="{{ route('login') }}" class="bg-blue-600 text-white px-6 py-2 rounded-lg">
+                        Inicia sesión para comprar
+                    </a>
+                @endauth
             </div>
         </div>
     @else

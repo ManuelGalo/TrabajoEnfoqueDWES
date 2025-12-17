@@ -4,6 +4,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Models\Product;
+use App\Http\Controllers\OrderController;
 
 // Rutas publicas
 
@@ -36,7 +37,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/checkout', [OrderController::class, 'create'])->name('checkout');
-    Route::post('/order/store', [OrderController::class, 'store'])->name('order.store');
+    Route::post('/finalizar-pedido', [OrderController::class, 'store'])->name('order.store');
 
 });
 
