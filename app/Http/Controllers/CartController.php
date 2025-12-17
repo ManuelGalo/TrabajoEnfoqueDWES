@@ -43,16 +43,13 @@ class CartController extends Controller
 
         return view('cart.index', compact('cart', 'total'));
     }
-
-    
-    
-
+ 
     //Eliminar del carrito
 
     public function remove($id)
     {
        $cart = session()->get('cart', []);
-       if(isset($cart[$ide])){
+       if(isset($cart[$id])){
         unset($cart[$id]);
         session()->put('cart', $cart);
        }
