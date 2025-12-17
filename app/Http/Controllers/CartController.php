@@ -12,13 +12,23 @@ class CartController extends Controller
     //Añadir al carrito
 
     public function add (Request $request, Product $product)
-    {
+    {   
+        //Verificamos si el producto tine stock
+        if ($product->stock <= 0){
+            return redirect()->back()->with('error', 'Lo sentimos, este artículo esta agotado');
+        }
         //obtener el carrito actual o array vacio si no existe
-       $cart = session()->get('cart',[]);
-
-        //si el producto esta ya, sumamos la cantidad, si no lo añadimos.
-        if(isset($cart[$product->id])){
-            $cart[$product->id]['quantity']++;
+        $cart = session()->get('cart',[]);
+        $quantityToAdd = $request->quantity ?? 1;
+      
+        //si el producto esta ya en el carrito y si la suma supera el stock.
+        $currentQtyInCart =  isset($cart[$product->id]) ?  $cart[$product->id]['quantity'] : 0;
+        if (($currentQtyInCart + $quantityToAdd) > $product->stock){
+            return redirect()->back()->with('error', "No puedes añadir más unidades. Tenemos disponible: {$product->stock}");
+        }    
+        //si podemos añadir al carrito, se añade
+        if (isset($cart[$product->id])){
+            $cart[$product->id]['quantity'] += $quantityToAdd;
         }else{
             $cart[$product->id]=[
                 "name" => $product->name,
