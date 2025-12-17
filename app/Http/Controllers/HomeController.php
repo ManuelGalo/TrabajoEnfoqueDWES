@@ -15,4 +15,22 @@ class HomeController extends Controller
             'botas' => Product::where('category', 'botas')->where('is_active', true)->get(),
         ]);
     }
+
+    public function category($category)
+    {   
+        $products = \App\Models\Product::where('category', $category)
+                    ->where('is_active', true)
+                    ->paginate(15); 
+
+        return view('tienda.category', compact('products', 'category'));
+    }
+    public function show($slug)
+    {
+        $product = \App\Models\Product::where('slug', $slug)
+                    ->where('is_active', true)
+                    ->firstOrFail(); 
+
+        return view('tienda.show', compact('product'));
+    }
+
 }

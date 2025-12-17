@@ -10,6 +10,10 @@ use App\Http\Controllers\HomeController;
 // Rutas publicas
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/categoria/{category}', [HomeController::class, 'category'])->name('tienda.category');
+Route::get('/producto/{slug}', [HomeController::class, 'show'])->name('tienda.show');
+
+
 
     //rutas del carrito
 Route::get('/carrito', [CartController::class,'index'])->name('cart.index');   

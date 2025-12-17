@@ -1,5 +1,6 @@
 <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 hover:shadow-2xl transition duration-300">
     {{-- Imagen del Producto --}}
+    
     <div class="relative h-56 w-full">
         @if($product->images && count($product->images) > 0)
             <img src="{{ asset('storage/' . $product->images[0]) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
@@ -16,9 +17,10 @@
 
     {{-- Detalles --}}
     <div class="p-5">
+        <a href="{{ route('tienda.show', $product->slug) }}">
         <h3 class="text-lg font-bold text-gray-800 truncate">{{ $product->name }}</h3>
         <p class="text-gray-500 text-sm mt-1 h-10 overflow-hidden">{{ $product->description }}</p>
-        
+        </a>
         <div class="mt-4 flex items-center justify-between">
             <span class="text-2xl font-extrabold text-indigo-600">{{ number_format($product->price, 2) }} €</span>
             <span class="text-sm text-gray-400">Stock: {{ $product->stock }}</span>
