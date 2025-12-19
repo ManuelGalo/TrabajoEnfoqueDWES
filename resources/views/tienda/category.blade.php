@@ -12,6 +12,21 @@
             </nav>
             <span class="text-gray-500 text-sm">{{ $products->total() }} productos encontrados</span>
         </div>
+        
+        {{--Filtros de busqueda--}}
+        <form action="{{ url()->current() }}" method="GET" class="flex gap-4 mb-8 bg-gray-50 p-4 rounded-lg">
+            <select name="gender" class="rounded-md border-gray-300">
+                <option value="">Género</option>
+                <option value="hombre">Hombre</option>
+                <option value="mujer">Mujer</option>
+            </select>
+            
+            <input type="number" name="min_price" placeholder="Precio mín" class="rounded-md border-gray-300 w-28">
+            <input type="number" name="max_price" placeholder="Precio máx" class="rounded-md border-gray-300 w-28">
+            <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-md">Filtrar</button>
+            <a href="{{ url()->current() }}" class="text-gray-500 py-2">Limpiar</a>
+        </form>
+
 
         {{-- Título de la Sección --}}
         <h1 class="text-4xl font-black text-gray-900 mb-10 capitalize border-l-8 border-indigo-500 pl-4">

@@ -16,17 +16,49 @@ class HomeController extends Controller
         ]);
     }
 
-    public function category($category)
+    /* public function category($category)
     {   
-        $products = \App\Models\Product::where('category', $category)
+        $products = Product::where('category', $category)
                     ->where('is_active', true)
                     ->paginate(15); 
 
         return view('tienda.category', compact('products', 'category'));
+    } */
+
+    public function category(Request $request, $category)
+    {
+        $query = Product::where('category', $category)->where('is_active', true);
+
+        // Filtro por género
+        if ($request->filled('gender')) {
+            $query->where('gender', $request->gender);
+        }
+
+        // Filtro por precio minimo
+        if ($request->filled('min_price')) {
+            $query->where('price', '>=', $request->min_price);
+        }
+        //Filtro por precio máximo
+        if ($request->filled('max_price')) {
+            $query->where('price', '<=', $request->max_price); 
+        }
+
+        // Filtro por talla (Relación)
+        if ($request->filled('size')) {
+            $query->whereHas('sizes', function($q) use ($request) {
+                $q->where('size', $request->size);
+            });
+        }
+
+        $products = $query->paginate(15)->withQueryString();
+
+        return view('tienda.category', compact('products', 'category'));
+        
     }
+
     public function show($slug)
     {
-        $product = \App\Models\Product::where('slug', $slug)
+        $product = Product::where('slug', $slug)
                     ->where('is_active', true)
                     ->firstOrFail(); 
 

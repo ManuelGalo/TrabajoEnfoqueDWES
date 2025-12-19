@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Models\Product;
+use App\Models\ProductSize;
 use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
@@ -21,6 +22,8 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -76,7 +79,7 @@ class ProductResource extends Resource
                             ->step(0.01)
                             ->placeholder('10.00'),
                         Repeater::make('sizes')
-                            ->relationship() // Busca la función sizes() en el modelo Product
+                            ->relationship() 
                             ->schema([
                                 TextInput::make('size')
                                     ->label('Talla')
@@ -129,7 +132,43 @@ class ProductResource extends Resource
                     ->boolean()
             ])
             ->filters([
-                //
+                SelectFilter::make('gender')
+                    ->options([
+                        'hombre' => 'Hombre',
+                        'mujer' => 'Mujer',
+                        'unisex' => 'Unisex',
+                    ]),
+                SelectFilter::make('category')
+                    ->options([
+                        'deporte' => 'Deporte',
+                        'casual' => 'Casual',
+                        'botas'  => 'Botas',
+                    ]),
+                SelectFilter::make('price')
+                    ->form([
+                        TextInput::make('min_price')
+                            ->numeric()
+                            ->label('Precio mínimo'),
+                        TextInput::make('max_price')
+                            ->numeric()
+                            ->label('Precio máx.'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder{
+                        return $query
+                            ->when($data['min_price'], fn ($query, $price) =>$query->where('price', '>=', $price))
+                            ->when($data['max_price'], fn ($query, $price) =>$query->where('price', '<=', $price));
+                    }),
+                SelectFilter::make('Size')
+                    ->label('talla')
+                    ->options(ProductSize::distinct()->pluck('size', 'size')->toArray())
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query->when($data['value'], function ($query, $size){
+                            $query->whereHas('sizes', fn ($q) => $q->where('size', $size));
+                        });
+                    }),
+
+
+
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
