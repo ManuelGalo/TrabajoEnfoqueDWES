@@ -12,13 +12,14 @@ class ProductFactory extends Factory
         
         return [
             'name' => ucfirst($name),
-            'slug' => Str::slug($name),
-            'description' => $this->faker->sentence(15),
-            'price' => $this->faker->randomFloat(2, 45, 180), 
-            'stock' => $this->faker->numberBetween(0, 20),
-            'category' => $this->faker->randomElement(['deporte', 'casual', 'botas']),
-            'is_active' => true,
-            'images' => [], 
+        'slug' => \Illuminate\Support\Str::slug($name),
+        'description' => $this->faker->sentence(15),
+        'price' => $this->faker->randomFloat(2, 45, 180),
+        
+        'category' => $this->faker->randomElement(['deporte', 'casual', 'botas']),
+        'gender' => $this->faker->randomElement(['hombre', 'mujer', 'unisex']),
+        'is_active' => true,
+        'images' => [], 
         ];
     }
 }

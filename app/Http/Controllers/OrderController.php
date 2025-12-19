@@ -40,11 +40,14 @@ class OrderController extends Controller
                 'address' => $request->address ?? 'Recoger en tienda', 
             ]);
             //procesa cada producto del pedido
-            foreach ($cart as $id => $details) {
-                $product = Product::find($id);
+            foreach ($cart as $cartIndex => $details) {
+                $product = Product::find($details['product_id']);
                 //verificar stock
-                if (!$product || $product->stock < $details['quantity']){
-                    throw new \Exception("Lo sentimos, ya no tenemos stock suficiente de: " . $details['name']);
+                $sizeRecord = ProductSize::where('product_id', $details['product_id'])
+                                            ->where('size', $details['size'])
+                                            ->first();
+                if (!$sizeRecord || $sizeRecord->stock < $details['quantity']){
+                    throw new \Exception("Lo sentimos, ya no tenemos stock suficiente de: " . $details['name'] . " (Talla " . $details['size'] . ")");
                 }    
         
                //Crea detalles pedido
@@ -53,9 +56,10 @@ class OrderController extends Controller
                     'product_id' => $id,
                     'quantity' => $details['quantity'],
                     'price' => $details['price'],
+                    'size' => $details['size'],
                 ]);
                 //se resta el stock
-                $product->decrement('stock', $details['quantity']);
+                $sizeRecord->decrement('stock', $details['quantity']);
             }
             DB::commit();
 

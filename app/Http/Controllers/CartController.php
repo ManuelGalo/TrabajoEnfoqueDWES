@@ -13,27 +13,41 @@ class CartController extends Controller
 
     public function add (Request $request, Product $product)
     {   
-        //Verificamos si el producto tine stock
-        if ($product->stock <= 0){
-            return redirect()->back()->with('error', 'Lo sentimos, este artículo esta agotado');
+        //Verificamos si la talla existe
+        $request->validate([
+            'size' => 'required|exist:product_size,size',
+        ]);
+        //Stock existente de la talla
+        $sizeOption = $product->size()->where('size', $request->size)->first();
+        $quantityToAdd = $request->quantity ?? 1;
+
+        if (!$sizeOption || $sizeOption->stock <= 0){
+            return redirect()->back()->with('error', 'Lo sentimos, esta talla esta agotada');
         }
+
         //obtener el carrito actual o array vacio si no existe
         $cart = session()->get('cart',[]);
-        $quantityToAdd = $request->quantity ?? 1;
-      
+        $cartIndex = $product->id . '-' . $request->size;
+              
         //si el producto esta ya en el carrito y si la suma supera el stock.
-        $currentQtyInCart =  isset($cart[$product->id]) ?  $cart[$product->id]['quantity'] : 0;
-        if (($currentQtyInCart + $quantityToAdd) > $product->stock){
-            return redirect()->back()->with('error', "No puedes añadir más unidades. Tenemos disponible: {$product->stock}");
+        $currentQtyInCart = 0;
+        if (isset($cart[$cartIndex])){
+            $currentQtyInCart = $cart[$cartIndex]['quantity'];
+        }
+        //Control de stock
+        if (($currentQtyInCart + $quantityToAdd) > $sizeOption->stock){
+            return redirect()->back()->with('error', "No puedes añadir más unidades. Tenemos disponible: {$sizeOption->stock}");
         }    
         //si podemos añadir al carrito, se añade
-        if (isset($cart[$product->id])){
-            $cart[$product->id]['quantity'] += $quantityToAdd;
+        if (isset($cart[$cartIndex])){
+            $cart[$cartIndex]['quantity'] += $quantityToAdd;
         }else{
-            $cart[$product->id]=[
+            $cart[$cartIndex]=[
+                "product_id" => $product->id,
                 "name" => $product->name,
                 "quantity" => 1,
                 "price" => $product->price,
+                "size" => $product->size,
                 "image" => $product->images[0] ?? null
             ];
         }
