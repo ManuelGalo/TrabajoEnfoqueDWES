@@ -1,6 +1,8 @@
 <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 hover:shadow-2xl transition duration-300">
+    {{-- Lógica de Stock Total --}}
+    @php $stockTotal = $product->sizes->sum('stock'); @endphp
+
     {{-- Imagen del Producto --}}
-    
     <div class="relative h-56 w-full">
         @if($product->images && count($product->images) > 0)
             <img src="{{ asset('storage/' . $product->images[0]) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
@@ -8,9 +10,19 @@
             <img src="via.placeholder.com" class="w-full h-full object-cover">
         @endif
         
-        @if($product->stock <= 0)
+        {{-- Etiquetas de Stock --}}
+        @if ($stockTotal < 3)
+            <div class="absolute top-0 right-0 bg-orange-500 text-white px-3 py-1 m-2 rounded-lg text-sm font-bold animate-pulse">
+                ¡Últimas unidades!
+            </div>
+            
+        @elseif ($stockTotal <= 0)
             <div class="absolute top-0 right-0 bg-red-600 text-white px-3 py-1 m-2 rounded-lg text-sm font-bold">
                 Agotado
+            </div>
+        @elseif($stockTotal >= 1)
+            <div class="absolute top-0 right-0 bg-green-600 text-white px-3 py-1 m-2 rounded-lg text-sm font-bold">
+                Disponible
             </div>
         @endif
     </div>
@@ -18,26 +30,28 @@
     {{-- Detalles --}}
     <div class="p-5">
         <a href="{{ route('tienda.show', $product->slug) }}">
-        <h3 class="text-lg font-bold text-gray-800 truncate">{{ $product->name }}</h3>
-        <p class="text-gray-500 text-sm mt-1 h-10 overflow-hidden">{{ $product->description }}</p>
+            <h3 class="text-lg font-bold text-gray-800 truncate">{{ $product->name }}</h3>
+            {{-- Badge de Género/Categoría --}}
+            <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded text-indigo-600 bg-indigo-200 last:mr-0 mr-1 mt-1">
+                {{ $product->gender }}
+            </span>
+            <p class="text-gray-500 text-sm mt-2 h-10 overflow-hidden">{{ $product->description }}</p>
         </a>
+
         <div class="mt-4 flex items-center justify-between">
             <span class="text-2xl font-extrabold text-indigo-600">{{ number_format($product->price, 2) }} €</span>
-            <span class="text-sm text-gray-400">Stock: {{ $product->stock }}</span>
+            <!-- <span class="text-sm {{ $stockTotal < 3 ? 'text-orange-600 font-bold' : 'text-gray-400' }}">
+                Stock: {{ $stockTotal }}
+            </span> -->
         </div>
 
-        {{-- Botón Añadir al Carrito --}}
+        {{-- Botón de Acción --}}
         <div class="mt-5">
-            @if($product->stock > 0)
-                <form action="{{ route('cart.add', $product) }}" method="POST">
-                    @csrf
-                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center">
-                        <svg xmlns="www.w3.org" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                        Añadir
-                    </button>
-                </form>
+            @if($stockTotal > 0)
+                {{-- IMPORTANTE: Enviamos a 'show' para que elija talla, no se puede añadir directo sin talla --}}
+                <a href="{{ route('tienda.show', $product->slug) }}" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center">
+                    Ver opciones / tallas
+                </a>
             @else
                 <button disabled class="w-full bg-gray-300 text-gray-500 font-bold py-2 px-4 rounded-lg cursor-not-allowed">
                     No disponible

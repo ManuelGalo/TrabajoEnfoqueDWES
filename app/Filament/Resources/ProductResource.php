@@ -120,8 +120,8 @@ class ProductResource extends Resource
                     ->label('Producto'),
                 TextColumn::make('price')
                     ->label('Precio'),
-                TextColumn::make('stock')
-                    ->label('Unds Stock'),
+                //TextColumn::make('stock')
+                //    ->label('Unds Stock'),
                 ImageColumn::make('images')
                     ->label('Imagenes')
                     ->circular()
