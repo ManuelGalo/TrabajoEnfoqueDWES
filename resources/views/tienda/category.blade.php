@@ -20,6 +20,15 @@
                 <option value="hombre">Hombre</option>
                 <option value="mujer">Mujer</option>
             </select>
+             <select name="size" onchange="this.form.submit()" class="rounded-md border-gray-300">
+                <option value="">Todas las tallas</option>
+                {{-- Listamos las tallas únicas que existen en la base de datos --}}
+                @foreach(\App\Models\ProductSize::distinct()->orderBy('size')->pluck('size') as $talla)
+                    <option value="{{ $talla }}" {{ request('size') == $talla ? 'selected' : '' }}>
+                        Talla {{ $talla }}
+                    </option>
+                @endforeach
+            </select>
             
             <input type="number" name="min_price" placeholder="Precio mín" class="rounded-md border-gray-300 w-28">
             <input type="number" name="max_price" placeholder="Precio máx" class="rounded-md border-gray-300 w-28">

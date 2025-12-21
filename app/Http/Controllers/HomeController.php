@@ -46,7 +46,8 @@ class HomeController extends Controller
         // Filtro por talla (Relación)
         if ($request->filled('size')) {
             $query->whereHas('sizes', function($q) use ($request) {
-                $q->where('size', $request->size);
+                $q->where('size', $request->size)
+                ->where('stock', '>', 0); // <--- IMPORTANTE: Solo tallas que se puedan comprar
             });
         }
 
