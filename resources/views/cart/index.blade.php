@@ -8,6 +8,7 @@
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="p-4">Producto</th>
+                        <th class="p-4">Talla</th>
                         <th class="p-4">Precio</th>
                         <th class="p-4">Cantidad</th>
                         <th class="p-4">Subtotal</th>
@@ -19,10 +20,11 @@
                         <tr class="border-b">
                             <td class="p-4 flex items-center">
                                 @if(isset($details['image']))
-                                    <img src="{{ asset('storage/' . $details['image'][0]) }}" class="w-12 h-12 object-cover rounded mr-4">
+                                    <img src="{{ asset('storage/app/public/' . $details['image']) }}" class="w-12 h-12 object-cover rounded mr-4">
                                 @endif
                                 {{ $details['name'] }}
                             </td>
+                            <td class="p-4">{{ number_format($details['size'])}}</td>
                             <td class="p-4">{{ number_format($details['price'], 2) }} €</td>
                             <td class="p-4">{{ $details['quantity'] }}</td>
                             <td class="p-4">{{ number_format($details['price'] * $details['quantity'], 2) }} €</td>

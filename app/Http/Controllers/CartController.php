@@ -15,10 +15,10 @@ class CartController extends Controller
     {   
         //Verificamos si la talla existe
         $request->validate([
-            'size' => 'required|exist:product_size,size',
+            'size' => 'required|exists:product_sizes,size',
         ]);
         //Stock existente de la talla
-        $sizeOption = $product->size()->where('size', $request->size)->first();
+        $sizeOption = $product->sizes()->where('size', $request->size)->first();
         $quantityToAdd = $request->quantity ?? 1;
 
         if (!$sizeOption || $sizeOption->stock <= 0){
@@ -45,9 +45,9 @@ class CartController extends Controller
             $cart[$cartIndex]=[
                 "product_id" => $product->id,
                 "name" => $product->name,
-                "quantity" => 1,
+                "quantity" => $quantityToAdd,
                 "price" => $product->price,
-                "size" => $product->size,
+                "size" => $request->size,
                 "image" => $product->images[0] ?? null
             ];
         }

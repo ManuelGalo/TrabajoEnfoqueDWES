@@ -11,14 +11,14 @@
         @endif
         
         {{-- Etiquetas de Stock --}}
-        @if ($stockTotal < 3)
-            <div class="absolute top-0 right-0 bg-orange-500 text-white px-3 py-1 m-2 rounded-lg text-sm font-bold animate-pulse">
-                ¡Últimas unidades!
-            </div>
-            
-        @elseif ($stockTotal <= 0)
+        @if ($stockTotal <= 0)
             <div class="absolute top-0 right-0 bg-red-600 text-white px-3 py-1 m-2 rounded-lg text-sm font-bold">
                 Agotado
+            </div>
+            
+        @elseif ($stockTotal < 3)
+            <div class="absolute top-0 right-0 bg-orange-500 text-white px-3 py-1 m-2 rounded-lg text-sm font-bold animate-pulse">
+                ¡Últimas unidades!
             </div>
         @elseif($stockTotal >= 1)
             <div class="absolute top-0 right-0 bg-green-600 text-white px-3 py-1 m-2 rounded-lg text-sm font-bold">
