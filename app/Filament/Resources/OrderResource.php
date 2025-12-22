@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource\RelationManagers;
 use App\Models\Order;
+use App\Models\ProductSize;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
@@ -62,6 +63,28 @@ class OrderResource extends Resource
                             Select::make('product_id')
                                 ->relationship('product', 'name'),
                                 //->disabled(),
+                            Select::make('size')
+                                ->label('Talla')
+                                ->options(function ($get){
+                                    $productId = $get('product_id');
+                                    if (!$productId){
+                                        return[];
+                                    }
+                                    return ProductSize::where('product_id', $productId)
+                                        ->where('stock', '>', 0)
+                                        ->orderBy('size')
+                                        ->get()  // ← get() en lugar de pluck()
+                                        ->mapWithKeys(function ($sizeRecord) {
+                                            return [
+                                                $sizeRecord->size => 
+                                                "{$sizeRecord->size} (Stock: {$sizeRecord->stock})"
+                                            ];
+                                        })
+                                        ->toArray();
+                               })
+                               ->required()
+                               ->searchable()
+                               ->reactive(),
                             TextInput::make('quantity'),
                                 //->disabled(),
                             TextInput::make('price')->prefix('€'),
