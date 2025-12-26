@@ -11,7 +11,7 @@ class EditOrder extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        // Calcular total para MOSTRAR correctamente en el form
+        // Calcular total 
         $data['total_amount'] = $this->record->items->sum(fn($item) => 
             $item->quantity * $item->price
         );
@@ -20,7 +20,7 @@ class EditOrder extends EditRecord
 
     protected function afterSave(): void
     {
-        // RECALCULAR y GUARDAR total después de editar
+        //REcalcular y guardar total después de editar
         $total = $this->record->items->sum(fn($item) => 
             $item->quantity * $item->price
         );

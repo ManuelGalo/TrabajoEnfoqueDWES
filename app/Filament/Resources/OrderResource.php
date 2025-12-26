@@ -45,7 +45,7 @@ class OrderResource extends Resource
                             ->disabled(fn (string $operation): bool => $operation !== 'create')
                             ->dehydrated(),
                         
-                        // ← TOTAL REACTIVO AQUÍ (SOLO UNA VEZ)
+                        // Total reactivo
                         TextInput::make('total_amount')
                             ->label('Total')
                             ->numeric()
@@ -73,7 +73,7 @@ class OrderResource extends Resource
                 Section::make('Productos Comprados')
                     ->schema([
                          Repeater::make('items')
-                            ->relationship()  // ← VOLVER A PONER
+                            ->relationship()  
                             ->defaultItems(1)
                             ->schema([
                                 Select::make('product_id')
@@ -115,7 +115,7 @@ class OrderResource extends Resource
                                     ->numeric()
                                     ->prefix('€')
                                     ->disabled()
-                                    ->dehydrated()  // ← IMPORTANTE: guarda aunque disabled
+                                    ->dehydrated() 
                                     ->required(),
                             ])
                             ->columns(4)

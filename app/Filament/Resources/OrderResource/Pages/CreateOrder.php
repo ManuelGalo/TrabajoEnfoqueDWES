@@ -25,7 +25,7 @@ class CreateOrder extends CreateRecord
         DB::transaction(function () {
             $total = 0;
             
-            // Recorrer items YA CREADOS por Filament
+            // Recorrer items ya creados  por Filament
             foreach ($this->record->items as $orderItem) {
                 // Verificar stock
                 $sizeRecord = ProductSize::where('product_id', $orderItem->product_id)
@@ -39,13 +39,13 @@ class CreateOrder extends CreateRecord
                 }
 
                 // Restar stock
-                $sizeRecord->decrement('stock', $orderItem->quantity);
+                // $sizeRecord->decrement('stock', $orderItem->quantity); -> lo hace el Observer
                 
                 // Sumar al total
                 $total += $orderItem->quantity * $orderItem->price;
             }
             
-            // ACTUALIZAR total_amount del pedido
+            // actualizar total_amount del pedido
             $this->record->update(['total_amount' => $total]);
         });
     }
