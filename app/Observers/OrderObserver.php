@@ -12,7 +12,12 @@ class OrderObserver
     
     public function saved(Order $order)
     {
-        // Evitar loop infinito con updateQuietly
+        // Solo recalcular si tiene items
+        if ($order->items->count() === 0) {
+            \Log::info("OrderObserver: Order #{$order->id} sin items, NO recalcular");
+            return;
+        }
+
         $newTotal = $order->items->sum(fn($item) => 
             $item->quantity * $item->price
         );
