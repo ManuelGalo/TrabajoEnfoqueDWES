@@ -1,0 +1,44 @@
+# Etapa 1: Compilar assets
+FROM node:20-alpine AS assets
+
+RUN apk add --no-cache \
+    php83 \
+    php83-phar \
+    php83-iconv \
+    php83-mbstring \
+    php83-openssl \
+    php83-tokenizer \
+    php83-intl \
+    php83-session \
+    php83-fileinfo \
+    php83-dom \
+    php83-xml \
+    php83-xmlwriter \
+    php83-xmlreader \
+    php83-simplexml \
+    php83-ctype \
+    php83-zip \
+    wget && \
+    ln -s /usr/bin/php83 /usr/bin/php
+
+RUN wget https://getcomposer.org/download/latest-stable/composer.phar -O /usr/local/bin/composer && \
+    chmod +x /usr/local/bin/composer
+
+WORKDIR /app
+
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-scripts --no-interaction
+
+COPY package*.json ./
+RUN npm ci
+
+COPY . .
+RUN npm run build
+
+# Etapa 2: Nginx
+FROM nginx:alpine
+
+COPY --from=assets /app/public /var/www/public
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80

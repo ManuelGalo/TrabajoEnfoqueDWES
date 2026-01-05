@@ -1,0 +1,80 @@
+services:
+  php-fpm:
+    build:
+      context: .
+      dockerfile: Dockerfile.php
+    restart: unless-stopped
+    volumes:
+      - ./storage:/var/www/storage
+      - ./bootstrap/cache:/var/www/bootstrap/cache
+      - ./public:/var/www/public
+    env_file:
+      - .env
+    networks:
+      - app-network
+    depends_on:
+      - mysql
+      - redis
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - certbot_www:/var/www/certbot
+    depends_on:
+      - php-fpm
+    networks:
+      - app-network
+      - proxy-network
+
+  certbot:
+    image: certbot/certbot
+    container_name: tienda-certbot
+    volumes:
+      - certbot_certs:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    networks:
+      - proxy-network
+    command: certonly --webroot -w /var/www/certbot --force-renewal --email admin@galoblanco.com -d galoblanco.com -d www.galoblanco.com --agree-tos
+
+  mysql:
+    image: 'mysql:8.0'
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
+
+  redis:
+    image: 'redis:alpine'
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+  proxy-network:
+    external: true
+
+volumes:
+  mysql-data:
+    driver: local
+  redis-data:
+    driver: local
+  certbot_certs:
+    external: true
+    name: galoblanco_certbot_certs
+  certbot_www:
+    driver: local
