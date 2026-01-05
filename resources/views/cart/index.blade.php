@@ -27,9 +27,9 @@
                                 {{ $details['name'] }}
                             </td>
                             <td class="p-4">{{ $details['size'] }}</td>
-                            <td class="p-4">{{ number_format($details['price'], 2) }} €</td>
+                            <td class="p-4">{{ number_format($details['price'], 2, ',', '.') }} €</td>
                             <td class="p-4">{{ $details['quantity'] }}</td>
-                            <td class="p-4">{{ number_format($details['price'] * $details['quantity'], 2) }} €</td>
+                            <td class="p-4">{{ number_format($details['price'] * $details['quantity'], 2, ',', '.') }} €</td>
                             <td class="p-4">
                                 <form action="{{ route('cart.remove', $id) }}" method="POST" class="inline">
                                     @csrf
@@ -51,7 +51,7 @@
             </div>
             <div class="flex gap-2">
                 <a href="{{ route('home') }}" 
-                   class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600">
+                   class="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600">
                     Seguir Comprando
                 </a>
                 @auth
@@ -63,6 +63,10 @@
                     <a href="{{ route('login') }}" 
                        class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
                         Inicia sesión para comprar
+                    </a>
+                    <a href="{{ route('register') }}" 
+                       class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                        Crear cuenta para comprar
                     </a>
                 @endauth
             </div>

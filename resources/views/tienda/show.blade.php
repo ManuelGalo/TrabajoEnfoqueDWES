@@ -12,7 +12,7 @@
                     {{-- Columna Detalles --}}
                     <div>
                         <h1 class="text-3xl font-bold text-gray-900">{{ $product->name }}</h1>
-                        <p class="text-2xl text-indigo-600 mt-2">{{ $product->price }} €</p>
+                        <p class="text-2xl text-indigo-600 mt-2">{{ number_format($product->price, 2, ',', '.') }} €</p>
 
                         {{-- LÓGICA DE STOCK TOTAL --}}
                         @php $stockTotal = $product->sizes->sum('stock'); @endphp

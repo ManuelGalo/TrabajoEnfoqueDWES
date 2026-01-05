@@ -44,7 +44,7 @@
                         </div>
                         <div class="flex justify-between border-b pb-2">
                             <span class="font-medium">Importe:</span>
-                            <span class="text-2xl font-bold text-green-600">{{ number_format($order->total_amount, 2) }} €</span>
+                            <span class="text-2xl font-bold text-green-600">{{ number_format($order->total_amount, 2, ',', '.') }} €</span>
                         </div>
                     </div>
 

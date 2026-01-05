@@ -9,7 +9,7 @@
                         <img src="{{ asset('images/logo-tienda.jpg') }}" 
                             alt="Tienda Zapatillas" 
                             class="h-10 w-auto">
-                        <span class="ml-3 text-xl font-bold text-gray-800 hidden sm:block">Tienda Zapatillas</span>
+                       <span class="ml-2 text-base sm:text-xl font-bold text-gray-800">Tienda Zapatillas</span>
                     </a>
                 </div>
 
@@ -104,11 +104,43 @@
         </div>
     </div>
 
+
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
+            {{-- Inicio --}}
+            <x-responsive-nav-link :href="route('home')" :active="request()->routeIs('home')">
+                {{ __('Inicio') }}
+            </x-responsive-nav-link>
+            
+            {{-- Deporte --}}
+            <x-responsive-nav-link :href="route('tienda.category', ['category' => 'deporte'])" :active="request()->routeIs('tienda.category') && request('category') == 'deporte'">
+                {{ __('Deporte') }}
+            </x-responsive-nav-link>
+            
+            {{-- Casual --}}
+            <x-responsive-nav-link :href="route('tienda.category', ['category' => 'casual'])" :active="request()->routeIs('tienda.category') && request('category') == 'casual'">
+                {{ __('Casual') }}
+            </x-responsive-nav-link>
+            
+            {{-- Botas --}}
+            <x-responsive-nav-link :href="route('tienda.category', ['category' => 'botas'])" :active="request()->routeIs('tienda.category') && request('category') == 'botas'">
+                {{ __('Botas') }}
+            </x-responsive-nav-link>
+            
+            {{-- Carrito --}}
+            <x-responsive-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.index')">
+                🛒 Carrito
+                @if(session('cart') && count(session('cart')) > 0)
+                    <span class="ml-2 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                        {{ count(session('cart')) }}
+                    </span>
+                @endif
+            </x-responsive-nav-link>
+            
+            {{-- Mi cuenta --}}
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
+                {{ __('Mi cuenta') }}
             </x-responsive-nav-link>
         </div>
 
@@ -116,7 +148,7 @@
         <div class="pt-4 pb-1 border-t border-gray-200">
             @auth
                 <div class="px-4">
-                    <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
+                    <div class="font-medium text-base text-gray-800">{{ Auth::user()->nombre }} {{ Auth::user()->apellidos }}</div>
                     <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
                 </div>
 
@@ -136,10 +168,15 @@
                 </div>
             @else
                 <div class="px-4 space-y-2">
-                    <x-responsive-nav-link :href="route('login')">Entrar</x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('register')">Registro</x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('login')">
+                        {{ __('Entrar') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('register')">
+                        {{ __('Registro') }}
+                    </x-responsive-nav-link>
                 </div>
             @endauth
         </div>
     </div>
+
 </nav>

@@ -28,7 +28,9 @@ class User extends Authenticatable implements FilamentUser
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'nombre',
+        'apellidos',
+        'dni',
         'email',
         'password',
     ];
@@ -58,5 +60,11 @@ class User extends Authenticatable implements FilamentUser
      public function orders()
     {
         return $this->hasMany(\App\Models\Order::class);
+    }
+
+    // Accessor para mostrar nombre completo
+    public function getNombreCompletoAttribute()
+    {
+        return "{$this->nombre} {$this->apellidos}";
     }
 }

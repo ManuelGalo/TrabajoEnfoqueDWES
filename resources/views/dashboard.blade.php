@@ -10,7 +10,7 @@
             <!-- Mensaje de bienvenida -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 mb-6">
                 <h3 class="text-2xl font-bold text-gray-800 mb-2">
-                    ¡Bienvenido, {{ Auth::user()->name }}!
+                    ¡Bienvenido, {{ Auth::user()->nombre }} {{ Auth::user()->apellidos }}!
                 </h3>
                 <p class="text-gray-600">Gestiona tus pedidos y perfil desde aquí.</p>
             </div>

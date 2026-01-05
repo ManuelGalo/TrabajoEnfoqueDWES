@@ -5,6 +5,7 @@ services:
       dockerfile: Dockerfile.php
     restart: unless-stopped
     volumes:
+      - /root/tienda:/var/www:rw
       - /var/www/vendor
       - ./storage:/var/www/storage
       - ./bootstrap/cache:/var/www/bootstrap/cache

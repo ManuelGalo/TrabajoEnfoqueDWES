@@ -39,7 +39,7 @@
         </a>
 
         <div class="mt-4 flex items-center justify-between">
-            <span class="text-2xl font-extrabold text-indigo-600">{{ number_format($product->price, 2) }} €</span>
+            <span class="text-2xl font-extrabold text-indigo-600">{{ number_format($product->price, 2, ',', '.') }} €</span>
             <!-- <span class="text-sm {{ $stockTotal < 3 ? 'text-orange-600 font-bold' : 'text-gray-400' }}">
                 Stock: {{ $stockTotal }}
             </span> -->
