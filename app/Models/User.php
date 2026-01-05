@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 
 
@@ -61,7 +62,11 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->hasMany(\App\Models\Order::class);
     }
-
+    // Accessor para compatibilidad con Filament
+    public function getNameAttribute(): string
+    {
+        return trim("{$this->nombre} {$this->apellidos}") ?: 'Usuario';
+    }
     // Accessor para mostrar nombre completo
     public function getNombreCompletoAttribute()
     {

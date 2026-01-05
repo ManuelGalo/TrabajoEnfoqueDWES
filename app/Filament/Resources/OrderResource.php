@@ -41,7 +41,7 @@ class OrderResource extends Resource
                         TextInput::make('id')->disabled()->label('ID Pedido'),
                         Select::make('user_id')
                             ->label('Cliente')
-                            ->relationship('user', 'name')
+                            ->relationship('user', 'nombre')
                             ->disabled(fn (string $operation): bool => $operation !== 'create')
                             ->dehydrated(),
                         
@@ -131,7 +131,7 @@ class OrderResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('id')->label('Pedido #')->sortable(),
-                TextColumn::make('user.name')->label('Cliente')->searchable(),
+                TextColumn::make('user.nombre')->label('Cliente')->searchable(),
                 TextColumn::make('total_amount')
                 ->label('Total')
                 ->money('EUR')

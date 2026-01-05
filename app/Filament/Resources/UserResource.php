@@ -40,25 +40,44 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Section::make()
-                    ->schema([
-                        TextInput::make('name')
-                            ->required()
-                            ->label('Nombre')
-                            ->maxLength(255),
-                        TextInput::make('email')-> email()->required(),
-                        TextInput::make('password')
-                            ->password()
-                            ->label('Contraseña')
-                            ->required()
-                            ->visible('create'),
-                        Select::make('roles')
-                            ->multiple()
-                            ->relationship('roles', 'name')
-                            ->preload()
-                            ->searchable()
-                            ->required()
-                    ])
+            Forms\Components\TextInput::make('nombre')
+                ->required()
+                ->maxLength(255)
+                ->label('Nombre'),
+                
+            Forms\Components\TextInput::make('apellidos')
+                ->required()
+                ->maxLength(255)
+                ->label('Apellidos'),
+                
+            Forms\Components\TextInput::make('dni')
+                ->required()
+                ->maxLength(9)
+                ->unique(ignoreRecord: true)
+                ->label('DNI/NIE')
+                ->placeholder('12345678A')
+                ->rule('regex:/^[0-9]{8}[A-Z]$/'),
+                
+            Forms\Components\TextInput::make('email')
+                ->email()
+                ->required()
+                ->maxLength(255)
+                ->unique(ignoreRecord: true)
+                ->label('Email'),
+                
+            Forms\Components\TextInput::make('password')
+                ->password()
+                ->required(fn ($livewire) => $livewire instanceof CreateRecord)
+                ->dehydrated(fn ($state) => filled($state))
+                ->maxLength(255)
+                ->label('Contraseña')
+                ->helperText('Dejar vacío para mantener la contraseña actual'),
+                
+            Forms\Components\Select::make('roles')
+                ->relationship('roles', 'name')
+                ->multiple()
+                ->preload()
+                ->label('Roles'),
             ]);
     }
 
@@ -66,28 +85,51 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')
-                    ->label('Nombre'),
-                TextColumn::make('email'),
-                TextColumn::make('roles.name')
-                    ->label('Rol')
-                    ->badge(),
-                TextColumn::make('created_at')
-                    ->label('Creado el')
-            ])
-            ->filters([
-                //
-            ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+            Tables\Columns\TextColumn::make('id')
+                ->sortable()
+                ->label('ID'),
+                
+            Tables\Columns\TextColumn::make('nombre')
+                ->searchable()
+                ->sortable()
+                ->label('Nombre'),
+                
+            Tables\Columns\TextColumn::make('apellidos')
+                ->searchable()
+                ->sortable()
+                ->label('Apellidos'),
+                
+            Tables\Columns\TextColumn::make('dni')
+                ->searchable()
+                ->label('DNI'),
+                
+            Tables\Columns\TextColumn::make('email')
+                ->searchable()
+                ->sortable()
+                ->label('Email'),
+                
+            Tables\Columns\TextColumn::make('roles.name')
+                ->badge()
+                ->label('Roles'),
+                
+            Tables\Columns\TextColumn::make('created_at')
+                ->dateTime('d/m/Y H:i')
+                ->sortable()
+                ->label('Registrado')
+                ->toggleable(isToggledHiddenByDefault: true),
+        ])
+        ->filters([
+            //
+        ])
+        ->actions([
+            Tables\Actions\EditAction::make(),
+            Tables\Actions\DeleteAction::make(),
+        ])
+        ->bulkActions([
+            Tables\Actions\BulkActionGroup::make([
+                Tables\Actions\DeleteBulkAction::make(),
+            ]),
+        ]);
     }
 
     public static function getRelations(): array
