@@ -6,7 +6,9 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>Tienda Zapatillas - {{ $header ?? 'Inicio' }}</title>
-
+         {{-- Favicon usando el logo --}}
+        <link rel="icon" type="image/jpeg" href="{{ asset('images/logo-tienda.jpg') }}">
+        <link rel="apple-touch-icon" href="{{ asset('images/logo-tienda.jpg') }}">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
