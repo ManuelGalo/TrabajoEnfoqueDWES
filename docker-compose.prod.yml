@@ -5,6 +5,7 @@ services:
       dockerfile: Dockerfile.php
     restart: unless-stopped
     volumes:
+      - /var/www/vendor
       - ./storage:/var/www/storage
       - ./bootstrap/cache:/var/www/bootstrap/cache
       - ./public:/var/www/public
@@ -24,6 +25,8 @@ services:
     ports:
       - "8080:80"
     volumes:
+      - ./public:/var/www/public:ro
+      - ./storage/app/public:/var/www/storage/app/public:ro
       - certbot_www:/var/www/certbot
     depends_on:
       - php-fpm

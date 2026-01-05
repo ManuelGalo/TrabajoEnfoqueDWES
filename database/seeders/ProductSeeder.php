@@ -7,44 +7,42 @@ use App\Models\ProductSize;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Faker\Factory as Faker;
 
 class ProductSeeder extends Seeder
 {
     public function run(): void
     {
-        $faker = Faker::create('es_ES');
         $allFiles = Storage::disk('public')->files('products');
 
-        // Diccionarios de términos para calzado
-        $marcas = ['Nova', 'Apex', 'Velo', 'Zenith', 'Hyper', 'Luna'];
+        $marcas = ['Nova', 'Apex', 'Velo', 'Zenith', 'Hyper', 'Luna', 'Swift', 'Pulse'];
         $modelos = ['Runner', 'Street', 'Cloud', 'Impact', 'Flow', 'Elite', 'Retro', 'Flex'];
         $tecnologias = ['con suela de carbono', 'con amortiguación gel', 'tejido transpirable', 'impermeables Gore-Tex', 'edición limitada'];
         $categorias = ['deporte', 'casual', 'botas'];
         $generos = ['hombre', 'mujer', 'unisex'];
+        $years = [2023, 2024, 2025];
 
-        // Crear 40 productos
         for ($i = 0; $i < 40; $i++) {
-            $marca = $faker->randomElement($marcas);
-            $modelo = $faker->randomElement($modelos);
-            $year = $faker->year();
+            $marca = $marcas[array_rand($marcas)];
+            $modelo = $modelos[array_rand($modelos)];
+            $year = $years[array_rand($years)];
             $name = "{$marca} {$modelo} {$year}";
             
-            $category = $faker->randomElement($categorias);
-            $gender = $faker->randomElement($generos);
+            $category = $categorias[array_rand($categorias)];
+            $gender = $generos[array_rand($generos)];
+            $tech = $tecnologias[array_rand($tecnologias)];
+            $price = round(rand(5900, 19900) / 100, 2);
 
             $product = Product::create([
                 'name' => $name,
                 'slug' => Str::slug($name . '-' . uniqid()),
-                'description' => "Zapatilla " . $faker->randomElement($tecnologias) . ". Diseñadas para ofrecer el máximo confort y durabilidad en cada pisada. Ideales para " . $faker->sentence(10),
-                'price' => $faker->randomFloat(2, 59, 199),
+                'description' => "Zapatilla {$tech}. Diseñadas para ofrecer el máximo confort y durabilidad en cada pisada. Perfectas para uso diario y ocasiones especiales.",
+                'price' => $price,
                 'category' => $category,
                 'gender' => $gender,
                 'is_active' => true,
                 'images' => [],
             ]);
 
-            // Asignar imagen según categoría y género
             $catChar = match($category) {
                 'botas' => 'b',
                 'casual' => 'c',
@@ -69,9 +67,13 @@ class ProductSeeder extends Seeder
                 $product->update(['images' => [$randomImage]]);
             }
 
-            // Generar tallas
             $tallasPosibles = ['38', '39', '40', '41', '42', '43', '44', '45'];
-            $tallasCheck = (array) array_rand(array_flip($tallasPosibles), rand(3, 5));
+            $numTallas = rand(3, 5);
+            $tallasCheck = array_rand(array_flip($tallasPosibles), $numTallas);
+            
+            if (!is_array($tallasCheck)) {
+                $tallasCheck = [$tallasCheck];
+            }
 
             foreach ($tallasCheck as $talla) {
                 ProductSize::create([
