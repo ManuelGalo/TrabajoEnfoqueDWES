@@ -61,7 +61,18 @@ class HomeController extends Controller
     {
         $product = Product::where('slug', $slug)
                     ->where('is_active', true)
-                    ->firstOrFail(); 
+                    ->firstOrFail();
+        $cart = session()->get('cart', []);
+
+        // Modificamos las tallas dinámicamente para la vista
+        $product->sizes->map(function ($sizeOption) use ($cart, $product) {
+            $cartKey = $product->id . '-' . $sizeOption->size;
+            $inCart = $cart[$cartKey]['quantity'] ?? 0;
+            
+            // Stock real disponible para este usuario específico
+            $sizeOption->available_stock = max(0, $sizeOption->stock - $inCart);
+            return $sizeOption;
+        }); 
 
         return view('tienda.show', compact('product'));
     }

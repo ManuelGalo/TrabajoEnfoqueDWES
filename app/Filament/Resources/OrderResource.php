@@ -38,10 +38,17 @@ class OrderResource extends Resource
             ->schema([
                 Section::make('Información del Pedido')
                     ->schema([
-                        TextInput::make('id')->disabled()->label('ID Pedido'),
+                        TextInput::make('id')
+                            ->disabled()
+                            ->label('ID Pedido'),
                         Select::make('user_id')
                             ->label('Cliente')
-                            ->relationship('user', 'nombre')
+                            ->relationship(
+                                'user',
+                                titleAttribute: 'nombre'
+                            )
+                            ->getOptionLabelFromRecordUsing(fn ($record) => $record->nombre_completo)
+                            ->searchable(['nombre', 'apellidos'])
                             ->disabled(fn (string $operation): bool => $operation !== 'create')
                             ->dehydrated(),
                         
@@ -109,7 +116,23 @@ class OrderResource extends Resource
                                     ->numeric()
                                     ->minValue(1)
                                     ->live()
-                                    ->required(),
+                                    ->required()
+                                    ->rules([
+                                        fn ($get): \Closure => function (string $attribute, $value, \Closure $fail) use ($get) {
+                                            $productId = $get('product_id');
+                                            $sizeName = $get('size');
+
+                                            if ($productId && $sizeName) {
+                                                $stock = \App\Models\ProductSize::where('product_id', $productId)
+                                                    ->where('size', $sizeName)
+                                                    ->value('stock');
+
+                                                if ($value > $stock) {
+                                                    $fail("Stock insuficiente. Solo quedan {$stock} unidades.");
+                                                }
+                                            }
+                                        },
+                                    ]),
 
                                 TextInput::make('price')
                                     ->numeric()
