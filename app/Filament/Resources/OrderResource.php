@@ -149,6 +149,7 @@ class OrderResource extends Resource
                 ->dateTime('d/m/Y H:i')
                 ->sortable(),
         ])
+        
         ->filters([
             Tables\Filters\SelectFilter::make('status')
                 ->options([
@@ -166,7 +167,8 @@ class OrderResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('id', 'desc');
     }
 
     public static function getRelations(): array

@@ -24,6 +24,8 @@ use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\Filter;
+use Filament\Notifications\Notification;
+use Filament\Tables\Actions\DeleteAction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -70,6 +72,14 @@ class ProductResource extends Resource
                                 'botas' => 'Botas',
                             ])
                             ->required(),
+                         Select::make('gender')
+                        ->label('Género')
+                        ->options([
+                            'hombre' => 'Hombre',
+                            'mujer' => 'Mujer',
+                            'unisex' => 'Unisex',
+                        ])
+                        ->required(),
                         TextInput::make('price')
                             ->label('Precio (EUR)')
                             ->required()
@@ -117,7 +127,8 @@ class ProductResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label('Producto'),
+                    ->label('Producto')
+                    ->searchable(),
                 TextColumn::make('price')
                     ->label('Precio'),
                 //TextColumn::make('stock')
@@ -173,7 +184,21 @@ class ProductResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                  ->before(function (DeleteAction $action, Product $record) {
+                    // Comprueba si el producto tiene elementos de pedido asociados
+                    if ($record->orderItems()->exists()) {
+                        // Muestra una notificación de error al usuario
+                        Notification::make()
+                            ->danger()
+                            ->title('No se puede eliminar el producto')
+                            ->body('Este producto está en pedidos existentes y no se puede eliminar.')
+                            ->send();
+
+                        // Detiene la acción de eliminación
+                        $action->halt();
+                    }
+                }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

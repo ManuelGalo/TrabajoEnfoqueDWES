@@ -28,6 +28,16 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // Redirige a /admin para acceder al panel de Filament
+        if ($request->user() && $request->user()->hasRole('admin')) {
+            return redirect()->intended('/admin');
+        }
+
+        // Si es cliente, redirige a la URL externa solicitada
+        if ($request->user() && $request->user()->hasRole('cliente')) {
+            return redirect()->away('https://galoblanco.com/dashboard');
+        }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

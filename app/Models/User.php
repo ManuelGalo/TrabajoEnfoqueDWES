@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use Spatie\Permission\Models\Role;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
 
@@ -15,8 +16,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use Hasroles;
-    use HasFactory, Notifiable;
+    use HasRoles, HasFactory, Notifiable;
 
     public function canAccessPanel(Panel $panel): bool
     {
@@ -47,17 +47,14 @@ class User extends Authenticatable implements FilamentUser
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
-     * @return array<string, string>
+     * @var array<string,string>
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
      public function orders()
     {
         return $this->hasMany(\App\Models\Order::class);
@@ -71,5 +68,14 @@ class User extends Authenticatable implements FilamentUser
     public function getNombreCompletoAttribute()
     {
         return "{$this->nombre} {$this->apellidos}";
+    }
+    // Asigna rol 'cliente' por defecto al crear un usuario (si existe)
+    protected static function booted(): void
+    {
+        static::created(function (self $user) {
+            if (Role::where('name', 'cliente')->exists()) {
+                $user->assignRole('cliente');
+            }
+        });
     }
 }
