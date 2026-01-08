@@ -154,7 +154,9 @@ class OrderResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('id')->label('Pedido #')->sortable(),
-                TextColumn::make('user.nombre')->label('Cliente')->searchable(),
+                TextColumn::make('user.nombre_completo')
+                ->label('Cliente')
+                ->searchable(),
                 TextColumn::make('total_amount')
                 ->label('Total')
                 ->money('EUR')

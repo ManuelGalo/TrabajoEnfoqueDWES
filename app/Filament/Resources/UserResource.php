@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
+use Illuminate\Validation\Rules\Password;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Dom\Text;
@@ -71,7 +72,20 @@ class UserResource extends Resource
                 ->dehydrated(fn ($state) => filled($state))
                 ->maxLength(255)
                 ->label('Contraseña')
-                ->helperText('Dejar vacío para mantener la contraseña actual'),
+                ->helperText('Debe contener mínimo 8 caracteres, una mayúscula, una minúscula, un número y el simbolo.
+                 Dejar vacío para mantener la contraseña actual')
+                ->rule(
+                    Password::min(8)
+                        ->mixedCase()
+                        ->numbers()
+                        ->symbols()
+                )
+                ->validationMessages([
+                    'min' => 'La contraseña es demasiado corta (mínimo 8 caracteres).',
+                    'mixed' => 'Falta una letra mayúscula o minúscula.',
+                    'numbers' => 'Debes incluir al menos un número.',
+                    'symbols' => 'Debes incluir un símbolo especial.',
+                ]),
                 
             Forms\Components\Select::make('roles')
                 ->relationship('roles', 'name')
